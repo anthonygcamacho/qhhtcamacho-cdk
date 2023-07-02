@@ -1,21 +1,43 @@
 #!/usr/bin/env node
-import 'source-map-support/register';
-import * as cdk from 'aws-cdk-lib';
-import { Qhhtcamacho2CdkStack } from '../lib/qhhtcamacho2-cdk-stack';
+import "source-map-support/register"
+import * as cdk from "aws-cdk-lib"
+import networkEnvSettings from "../lib/config/env"
+import networkSettings from "../lib/config/network"
+import { QHHTCamachoInfrastructure } from "../lib/stacks/QHHTCamachoInfrastructure"
 
-const app = new cdk.App();
-new Qhhtcamacho2CdkStack(app, 'Qhhtcamacho2CdkStack', {
-  /* If you don't specify 'env', this stack will be environment-agnostic.
-   * Account/Region-dependent features and context lookups will not work,
-   * but a single synthesized template can be deployed anywhere. */
+import EnvSettings from "../lib/types/EnvSettings"
+import EnvSetting from "../lib/types/EnvSetting"
 
-  /* Uncomment the next line to specialize this stack for the AWS Account
-   * and Region that are implied by the current CLI configuration. */
-  // env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
+const app = new cdk.App()
 
-  /* Uncomment the next line if you know exactly what Account and Region you
-   * want to deploy the stack to. */
-  // env: { account: '123456789012', region: 'us-east-1' },
+// NODE_ENV is set by sh/[deploy|synth|destroy].sh
+const environment: string = process.env.NODE_ENV ?? ""
 
-  /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
-});
+// Environment settings for: dev, test, staging, prod
+let envSettings
+if (environment && typeof environment == "string") {
+    envSettings = networkEnvSettings[
+        environment as keyof EnvSettings
+    ] as EnvSetting
+}
+
+const { account, region, cidr, maxAzs } = networkSettings
+
+const { applicationName, loadBalancerType, instanceType } =
+    app.node.tryGetContext("configuration")
+
+if (envSettings && envSettings.ENV) {
+    let { ENV } = envSettings
+    new QHHTCamachoInfrastructure(app, `QHHTCamachoInfrastructure`, {
+        env: {
+            account,
+            region,
+        },
+        applicationName,
+        // loadBalancerType,
+        // instanceType,
+        ENV,
+        cidr,
+        maxAzs,
+    })
+}
