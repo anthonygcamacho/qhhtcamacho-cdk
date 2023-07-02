@@ -16,9 +16,16 @@
     },
     "context": {
         "configuration": {
-            "instanceType": "t2.micro",
             "applicationName": "QHHTCamacho",
-            "loadBalancerType": "application"
+            "tierName": "WebServer",
+            "tierType": "Standard",
+            "solutionStackName": "64bit Amazon Linux 2 v5.8.3 running Node.js 18",
+            "serviceRole": "qhhtcamacho-elasticbeanstalk-service-role",
+            "ec2InstanceProfile": "qhhtcamacho-elasticbeanstalk-ec2-role",
+            "instanceType": "t2.micro",
+            "loadBalancerType": "application",
+            "ASGMinSize": "1",
+            "ASGMaxSize": "1"
         },
         "@aws-cdk/aws-lambda:recognizeLayerVersion": true,
         "@aws-cdk/core:checkSecretUsage": true,

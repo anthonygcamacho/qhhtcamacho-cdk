@@ -23,8 +23,18 @@ if (environment && typeof environment == "string") {
 
 const { account, region, cidr, maxAzs } = networkSettings
 
-const { applicationName, loadBalancerType, instanceType } =
-    app.node.tryGetContext("configuration")
+const {
+    applicationName,
+    tierName,
+    tierType,
+    solutionStackName,
+    serviceRole,
+    ec2InstanceProfile,
+    instanceType,
+    loadBalancerType,
+    ASGMinSize,
+    ASGMaxSize,
+} = app.node.tryGetContext("configuration")
 
 if (envSettings && envSettings.ENV) {
     let { ENV } = envSettings
@@ -33,11 +43,18 @@ if (envSettings && envSettings.ENV) {
             account,
             region,
         },
-        applicationName,
-        // loadBalancerType,
-        // instanceType,
         ENV,
         cidr,
         maxAzs,
+        applicationName,
+        tierName,
+        tierType,
+        solutionStackName,
+        serviceRole,
+        ec2InstanceProfile,
+        instanceType,
+        loadBalancerType,
+        ASGMinSize,
+        ASGMaxSize,
     })
 }
