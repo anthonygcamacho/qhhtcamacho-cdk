@@ -2,6 +2,12 @@ import * as cdk from "aws-cdk-lib"
 import * as ec2 from "aws-cdk-lib/aws-ec2"
 import { IpAddresses, SubnetType, Vpc } from "aws-cdk-lib/aws-ec2"
 import * as elasticbeanstalk from "aws-cdk-lib/aws-elasticbeanstalk"
+import * as acm from "aws-cdk-lib/aws-certificatemanager"
+import * as cloudfront from "aws-cdk-lib/aws-cloudfront"
+import * as origins from "aws-cdk-lib/aws-cloudfront-origins"
+import * as route53 from "aws-cdk-lib/aws-route53"
+import * as route53targets from "aws-cdk-lib/aws-route53-targets"
+import { ViewerProtocolPolicy } from "aws-cdk-lib/aws-cloudfront"
 import { Construct } from "constructs"
 
 // console.log(process.env)
@@ -10,6 +16,7 @@ export interface QHHTCamachoInfrastructureProps extends cdk.StackProps {
     readonly ENV: string
     readonly cidr: string
     readonly maxAzs: number
+    readonly domainName: string
     readonly applicationName: string
     readonly tierName: string
     readonly tierType: string
@@ -52,6 +59,7 @@ export class QHHTCamachoInfrastructure extends cdk.Stack {
             ENV,
             cidr,
             maxAzs,
+            domainName,
             applicationName,
             tierName,
             tierType,
@@ -160,5 +168,26 @@ export class QHHTCamachoInfrastructure extends cdk.Stack {
             solutionStackName: solutionStackName,
             optionSettings: optionSettingProperties,
         })
+
+        const zone = route53.HostedZone.fromLookup(this, "HostedZone", {
+            domainName: domainName,
+        })
+
+        const certificate = new acm.CfnCertificate(this, "Certificate", {
+            domainName: domainName,
+
+            // hostedZone: zone,
+            // region: this.region,
+        })
+
+        const cf = new cloudfront.Distribution(
+            this,
+            "CloundfrontDistribution",
+            {
+                domainNames: [domainName, `*.${domainName}`],
+                certificate: ic,
+                enableIpv6: false,
+            }
+        )
     }
 }

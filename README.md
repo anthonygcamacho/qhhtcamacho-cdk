@@ -13,6 +13,12 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 -   `cdk diff` compare deployed stack with current state
 -   `cdk synth` emits the synthesized CloudFormation template
 
+## AWS CDK Docs
+
+[EB Configuration options](https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/command-options.html)
+
+[aws-cdk-lib.aws_elasticbeanstalk module](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_elasticbeanstalk-readme.html)
+
 ## References
 
 [Deploy Your Web Application with AWS Elastic Beanstalk and AWS CDK Pipelines](https://community.aws/tutorials/deploy-webapp-eb-cdk)

@@ -16,6 +16,7 @@
     },
     "context": {
         "configuration": {
+            "domainName": "qhhtcamacho.com",
             "applicationName": "QHHTCamacho",
             "tierName": "WebServer",
             "tierType": "Standard",

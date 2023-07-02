@@ -24,6 +24,7 @@ if (environment && typeof environment == "string") {
 const { account, region, cidr, maxAzs } = networkSettings
 
 const {
+    domainName,
     applicationName,
     tierName,
     tierType,
@@ -46,6 +47,7 @@ if (envSettings && envSettings.ENV) {
         ENV,
         cidr,
         maxAzs,
+        domainName,
         applicationName,
         tierName,
         tierType,
