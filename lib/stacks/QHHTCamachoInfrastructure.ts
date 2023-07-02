@@ -109,11 +109,12 @@ export class QHHTCamachoInfrastructure extends cdk.Stack {
         // // Define settings for the Elastic Beanstalk application
         // // Documentation for settings: https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/command-options-general.html
         var ebSettings = [
-            [
-                "aws:elasticbeanstalk:managedactions",
-                "ServiceRoleForManagedUpdates",
-                serviceRole,
-            ],
+            // [
+            //     "aws:elasticbeanstalk:managedactions",
+            //     "ServiceRoleForManagedUpdates",
+            //     serviceRole,
+            // ],
+            ["aws:elasticbeanstalk:environment", "ServiceRole", serviceRole],
             [
                 "aws:autoscaling:launchconfiguration",
                 "IamInstanceProfile",
