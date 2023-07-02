@@ -1,3 +1,4 @@
+import "dotenv/config"
 import * as cdk from "aws-cdk-lib"
 import * as ec2 from "aws-cdk-lib/aws-ec2"
 import { IpAddresses, SubnetType, Vpc } from "aws-cdk-lib/aws-ec2"
@@ -6,6 +7,7 @@ import * as acm from "aws-cdk-lib/aws-certificatemanager"
 import * as cloudfront from "aws-cdk-lib/aws-cloudfront"
 import * as origins from "aws-cdk-lib/aws-cloudfront-origins"
 import * as route53 from "aws-cdk-lib/aws-route53"
+import * as elbv2 from "aws-cdk-lib/aws-elasticloadbalancingv2"
 import * as route53targets from "aws-cdk-lib/aws-route53-targets"
 import { ViewerProtocolPolicy } from "aws-cdk-lib/aws-cloudfront"
 import { Construct } from "constructs"
@@ -117,11 +119,6 @@ export class QHHTCamachoInfrastructure extends cdk.Stack {
         // // Define settings for the Elastic Beanstalk application
         // // Documentation for settings: https://docs.aws.amazon.com/elasticbeanstalk/latest/dg/command-options-general.html
         var ebSettings = [
-            // [
-            //     "aws:elasticbeanstalk:managedactions",
-            //     "ServiceRoleForManagedUpdates",
-            //     serviceRole,
-            // ],
             ["aws:elasticbeanstalk:environment", "ServiceRole", serviceRole],
             [
                 "aws:autoscaling:launchconfiguration",
@@ -158,34 +155,60 @@ export class QHHTCamachoInfrastructure extends cdk.Stack {
             }))
 
         // Create Elastic Beanstalk environment
-        new elasticbeanstalk.CfnEnvironment(this, `EBEnvironment-${ENV}`, {
-            applicationName: applicationName,
-            tier: {
-                name: tierName,
-                type: tierType,
-            },
-            environmentName: `${applicationName}-${ENV}`,
-            solutionStackName: solutionStackName,
-            optionSettings: optionSettingProperties,
-        })
+        const ebEnv = new elasticbeanstalk.CfnEnvironment(
+            this,
+            `EBEnvironment-${ENV}`,
+            {
+                applicationName: applicationName,
+                tier: {
+                    name: tierName,
+                    type: tierType,
+                },
+                environmentName: `${applicationName}-${ENV}`,
+                solutionStackName: solutionStackName,
+                optionSettings: optionSettingProperties,
+            }
+        )
 
         const zone = route53.HostedZone.fromLookup(this, "HostedZone", {
             domainName: domainName,
         })
 
-        const certificate = new acm.CfnCertificate(this, "Certificate", {
-            domainName: domainName,
+        const certificate = acm.Certificate.fromCertificateArn(
+            this,
+            "Certificate",
+            process.env.ACM_ARN!
+        )
 
-            // hostedZone: zone,
-            // region: this.region,
-        })
+        const loadBalancer = elbv2.ApplicationLoadBalancer.fromLookup(
+            this,
+            "ALB",
+            {
+                loadBalancerTags: {
+                    "elasticbeanstalk:environment-name":
+                        ebEnv.environmentName as string,
+                },
+            }
+        )
 
         const cf = new cloudfront.Distribution(
             this,
             "CloundfrontDistribution",
             {
-                domainNames: [domainName, `*.${domainName}`],
-                certificate: ic,
+                defaultBehavior: {
+                    origin: new origins.LoadBalancerV2Origin(loadBalancer, {
+                        protocolPolicy:
+                            cloudfront.OriginProtocolPolicy.HTTP_ONLY,
+                    }),
+                    compress: true,
+                    allowedMethods:
+                        cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
+                    viewerProtocolPolicy:
+                        cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
+                    cachePolicy: cloudfront.CachePolicy.CACHING_OPTIMIZED,
+                },
+                domainNames: [domainName, `www.${domainName}`],
+                certificate,
                 enableIpv6: false,
             }
         )

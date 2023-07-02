@@ -30,3 +30,9 @@ The `cdk.json` file tells the CDK Toolkit how to execute your app.
 [AWS CDK — Create domain into route53 HostedZone, request SSL certificate with Certificate Manager, create an alarm when the SSL is expired, and save your DNS queries metric data for monitoring](https://parisnakitakejser.medium.com/aws-cdk-create-domain-into-route53-hostedzone-request-ssl-certificate-with-certificate-manager-ad5fb5e53333)
 
 [CDK Series: Creating an ElastiCache Cluster](https://sewb.dev/posts/cdk-series:-creating-an-elasticache-cluster-bc1zupe)
+
+[Deploying a CloudFront WAF with AWS CDK and Typescript](https://spoofing.medium.com/deploying-a-cloudfront-waf-with-typescript-and-aws-cdk-e35df6d7d00c)
+
+[Deploying a Custom WAF v2 Rule with the AWS CDK](https://benellis.cloud/deploying-a-custom-waf-v2-rule-with-the-aws-cdk)
+
+[Building A CDN With S3, Cloudfront And The AWS CDK](https://blog.dennisokeeffe.com/blog/2021-08-08-building-a-cdn-with-s3-cloudfront-and-the-aws-cdk)

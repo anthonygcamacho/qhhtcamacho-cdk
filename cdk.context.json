@@ -3,5 +3,49 @@
     "us-east-2a",
     "us-east-2b",
     "us-east-2c"
-  ]
+  ],
+  "hosted-zone:account=759536341951:domainName=qhhtcamacho.com:region=us-east-2": {
+    "Id": "/hostedzone/Z0197415951HXWZKRN0V",
+    "Name": "qhhtcamacho.com."
+  },
+  "load-balancer:account=759536341951:loadBalancerTags.0.key=elasticbeanstalk$:environment-name:loadBalancerTags.0.value=QHHTCamacho-PROD:loadBalancerType=application:region=us-east-2": {
+    "loadBalancerArn": "arn:aws:elasticloadbalancing:us-east-2:759536341951:loadbalancer/app/awseb-AWSEB-1DI7Z2FIITWKH/6a3a6df76387154e",
+    "loadBalancerCanonicalHostedZoneId": "Z3AADJGX6KTTL2",
+    "loadBalancerDnsName": "awseb-AWSEB-1DI7Z2FIITWKH-2092639794.us-east-2.elb.amazonaws.com",
+    "vpcId": "vpc-05479e62b36ed285f",
+    "securityGroupIds": [
+      "sg-05ae78431337a2c24"
+    ],
+    "ipAddressType": "ipv4"
+  },
+  "vpc-provider:account=759536341951:filter.vpc-id=vpc-05479e62b36ed285f:region=us-east-2:returnAsymmetricSubnets=true": {
+    "vpcId": "vpc-05479e62b36ed285f",
+    "vpcCidrBlock": "10.1.0.0/16",
+    "ownerAccountId": "759536341951",
+    "availabilityZones": [],
+    "subnetGroups": [
+      {
+        "name": "public",
+        "type": "Public",
+        "subnets": [
+          {
+            "subnetId": "subnet-0a72f9ebb1c46fbb5",
+            "cidr": "10.1.0.0/20",
+            "availabilityZone": "us-east-2a",
+            "routeTableId": "rtb-0a5b9ff47a2c0160b"
+          },
+          {
+            "subnetId": "subnet-0aada82bbb23cd735",
+            "cidr": "10.1.16.0/20",
+            "availabilityZone": "us-east-2b",
+            "routeTableId": "rtb-0839d4e26f463aad4"
+          }
+        ]
+      }
+    ]
+  },
+  "security-group:account=759536341951:region=us-east-2:securityGroupId=sg-05ae78431337a2c24": {
+    "securityGroupId": "sg-05ae78431337a2c24",
+    "allowAllOutbound": false
+  }
 }
