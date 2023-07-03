@@ -8,14 +8,14 @@ import * as cloudfront from "aws-cdk-lib/aws-cloudfront"
 import * as origins from "aws-cdk-lib/aws-cloudfront-origins"
 import * as route53 from "aws-cdk-lib/aws-route53"
 import * as elbv2 from "aws-cdk-lib/aws-elasticloadbalancingv2"
-import * as route53targets from "aws-cdk-lib/aws-route53-targets"
-import { ViewerProtocolPolicy } from "aws-cdk-lib/aws-cloudfront"
+import * as iam from "aws-cdk-lib/aws-iam"
 import { Construct } from "constructs"
 
 // console.log(process.env)
 
 export interface QHHTCamachoInfrastructureProps extends cdk.StackProps {
     readonly ENV: string
+    readonly NODE_ENV: string
     readonly cidr: string
     readonly maxAzs: number
     readonly domainName: string
@@ -59,6 +59,7 @@ export class QHHTCamachoInfrastructure extends cdk.Stack {
 
         let {
             ENV,
+            NODE_ENV,
             cidr,
             maxAzs,
             domainName,
@@ -96,9 +97,25 @@ export class QHHTCamachoInfrastructure extends cdk.Stack {
             ],
         })
 
+        const iamServiceRole = iam.Role.fromRoleName(
+            this,
+            "IAMRole",
+            serviceRole
+        )
+
         // Define a new Elastic Beanstalk application
         const app = new elasticbeanstalk.CfnApplication(this, "EBApplication", {
             applicationName,
+            resourceLifecycleConfig: {
+                serviceRole: iamServiceRole.roleArn,
+                versionLifecycleConfig: {
+                    maxCountRule: {
+                        deleteSourceFromS3: true,
+                        enabled: true,
+                        maxCount: 5,
+                    },
+                },
+            },
         })
 
         const publicSubnets = this.vpc.selectSubnets({
@@ -144,6 +161,11 @@ export class QHHTCamachoInfrastructure extends cdk.Stack {
                 "aws:elasticbeanstalk:application:environment",
                 "REGION",
                 this.region,
+            ],
+            [
+                "aws:elasticbeanstalk:application:environment",
+                "NODE_ENV",
+                NODE_ENV,
             ],
         ]
 

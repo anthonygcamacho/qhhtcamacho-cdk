@@ -4,6 +4,7 @@ const networkEnvSettings: EnvSettings = {
     prod: {
         ENV: "PROD",
         suffix: "QHHTCamacho",
+        NODE_ENV: "production",
     },
 }
 

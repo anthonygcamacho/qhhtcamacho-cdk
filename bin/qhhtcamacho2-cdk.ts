@@ -38,13 +38,14 @@ const {
 } = app.node.tryGetContext("configuration")
 
 if (envSettings && envSettings.ENV) {
-    let { ENV } = envSettings
+    let { ENV, NODE_ENV } = envSettings
     new QHHTCamachoInfrastructure(app, `QHHTCamachoInfrastructure`, {
         env: {
             account,
             region,
         },
         ENV,
+        NODE_ENV,
         cidr,
         maxAzs,
         domainName,
